@@ -1,0 +1,171 @@
+<!doctype html>
+<html>
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+        <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+        <title>StatPlanet</title>
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <link rel="apple-touch-icon" href="apple-touch-icon.png">
+        <link rel="stylesheet" href="misc/custom-bootstrap.css">
+        <link href="misc/gridstack.css" rel="stylesheet" type="text/css"/>
+        <link rel="stylesheet" href="misc/main.css">
+		<link rel="stylesheet" href="misc/splashscreen.css">
+    </head>
+    <body>
+        <!--[if lt IE 8]>
+            <p class="browserupgrade">You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser</a> to improve your experience.</p>
+        <![endif]-->
+		<div class="container">
+            <!-- Example row of columns -->
+            <div class="row">
+                <div class="col-md-15" id="statsilk-container"></div>
+            </div>
+			<div class="splash-container"></div>
+        </div> <!-- /container -->
+		<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>                
+        <script>
+            (function ($) {
+                // Splash Plugin.
+                $.fn.splash = function (options) {
+
+                    var defaults = {
+                        startButton: true,
+                        buttonText:"Start",
+                        title: "StatPlanet Cloud",
+                        subTitle: "",
+                        description: "",
+                        footer: '',
+                        images: ["misc/logo.png"],
+                        template: '<div class="splash-content">\
+                                        <div class="splash-title"></div>\
+                                        <div class="splash-sub-title"></div>\
+                                        <div class="splash-content">\
+                                            <div class="splash-progress"></div>\
+                                            <div class="splash-description"></div>\
+                                            <div class="splash-images"></div>\
+                                            <div class="splash-footer"></div>\
+                                        </div>\
+                                    </div>'
+                    }, root = this;
+                    // Extend our default options with those provided.
+                    var opts = $.extend({}, defaults, options);
+
+
+                    root.init = function () {
+                        console.log('init splash');
+                        root.append(opts.template);
+                        root.find('.splash-title').html('<h1>' + opts.title + '</h1>');
+                        root.find('.splash-sub-title').html('<h3>' + opts.subTitle + '</h3>');
+                        root.find('.splash-description').html(opts.description);
+                        root.find('.splash-footer').html(opts.footer);
+
+                        if (opts.images && opts.images.length) {
+                            for (var i = 0, im = opts.images, len = im.length; i < len; i++) {
+                                $('<img />').attr('src', im[i]).appendTo(root.find('.splash-images'));
+                            }
+                        }
+                    };
+                    
+                    root.close = function(){
+                        root.hide();
+                    };
+
+                    root.init();
+                    return {
+                        startButton: opts.startButton,
+                        buttonText:opts.buttonText,
+                        progressElem:root.find('.splash-progress'),
+                        close:function(){root.close()}
+                    };
+                };
+            })(jQuery);
+
+            var objSplash = $('.splash-container').splash({startButton: false});
+            paceOptions = {
+                ajax: true,
+                document: true,
+                target: '.splash-progress',
+                elements: {
+                    selectors: ['#statsilk-container']
+                }
+            };
+
+        </script>  
+		<script>
+			// **** CONFIGURATION *************************************************
+			
+            var data_file = "data/data.csv";
+			var settings_file = "data/settings.csv";
+			var map_file = "map/map.js";
+			
+			// ********************************************************************		
+        </script>  
+        <script src="misc/statplanet_cloud0.js"></script>
+        <script src="misc/statplanet_cloud1.js"></script>
+
+        <script>
+			var preload = new createjs.LoadQueue(true);
+            preload.on("progress", handleFileProgress);
+            preload.on("complete", loadComplete);
+            paceOptions  = {
+                ajax:true,
+                document: false,
+                elements: {
+                    selectors: ['#statsilk-container']
+                }
+            };
+            var manifest = [
+                {src: "misc/statplanet_cloud2b.js"},
+                {src: "misc/statplanet_cloud2c.js"},
+                {src: "misc/statplanet_cloud3.js"}, 
+				{src: "misc/statplanet_cloud4.js"}, 
+				{src: "https://cloud.statsilk.com/lt/statplanet_cloud5.js"},
+                {src: "https://cloud.statsilk.com/lt/statplanet_cloud5b.js"},
+                {src: "https://cloud.statsilk.com/lt/statplanet_cloud5c.js"},
+                {src: "misc/statplanet_cloud5d.js"},
+				{src: map_file},                
+                {src: "https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.11.4/jquery-ui.js"},
+                {src: "https://cdnjs.cloudflare.com/ajax/libs/lodash.js/3.5.0/lodash.min.js"},
+                {src: "misc/statplanet_cloud6.js"},
+                {src: "misc/statplanet_cloud7.js"}, 
+                {src: "misc/statplanet_cloud8.js"}, 
+                {src: "misc/list.min.js"}, 
+                {src: "misc/list.fuzzysearch.min.js"}, 
+                {src: "https://cloud.statsilk.com/l/oecd/statplanet_cloud2.0.js"}
+            ];
+            preload.loadManifest(manifest);
+            function handleFileProgress() {}
+            function loadComplete() {
+                
+                $(function () {
+					Pace.on('hide', function () {
+                        console.log(objSplash.startButton);
+                        if (objSplash.hasOwnProperty('startButton') && objSplash.startButton == true) {
+                            $('<button class="app-start-button">'+objSplash.buttonText+'</button>').appendTo(objSplash.progressElem).on('click', function(){objSplash.close()});
+                        } else {
+                            objSplash.close();
+                        }
+                    });
+                    Pace.track(function () {
+                        $('#statsilk-container').statsilk({
+                            gridstackOptions:{
+								cellHeight: 10,
+                                verticalMargin: 10,
+                            },
+                            
+                        dataFile: data_file,
+                        settingsFile: settings_file,
+                        mapDataFile:map_file,		
+						startupParams:'r=1',								
+						//chartColor:'#337ab7',
+                        tempMapData:"Statplanet.maps['custom/map']",						
+                        });
+					 });
+                });
+            }
+        </script>
+        
+
+    </body>
+</html>
